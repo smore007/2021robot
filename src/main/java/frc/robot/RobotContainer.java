@@ -24,28 +24,33 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   Drivetrain m_drivetrain = new Drivetrain();
-  Indexer m_indexer = new Indexer();
-  Gateway m_gateway = new Gateway();
-  Shooter m_shooter = new Shooter();
+  //Indexer m_indexer = new Indexer();
+  //Gateway m_gateway = new Gateway();
+  //Shooter m_shooter = new Shooter();
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     // Passively spin indexer, gateway
-    m_indexer.setDefaultCommand(new SpinIndexer(m_indexer, () -> .1));
-    m_gateway.setDefaultCommand(new SpinGateway(m_gateway, () -> -.1));
+    //m_indexer.setDefaultCommand(new SpinIndexer(m_indexer, () -> .1));
+    //m_gateway.setDefaultCommand(new SpinGateway(m_gateway, () -> -.1));
 
     // Configure the button bindings
     configureButtonBindings();
   }
 
   private void configureButtonBindings() {
-    // Arcade drive
+    // Pravshot drive
     m_drivetrain.setDefaultCommand(
-      new RunCommand(() -> m_drivetrain.arcadeDrive(
-        -m_controller.getRawAxis(XboxController.Axis.kRightY.value), 
-        m_controller.getRawAxis(XboxController.Axis.kLeftX.value)), 
+      new RunCommand(() -> {
+          double forward = -m_controller.getRawAxis(XboxController.Axis.kRightY.value);
+          double turn = m_controller.getRawAxis(XboxController.Axis.kLeftX.value);
+          m_drivetrain.arcadeDrive(
+            Math.copySign(Math.pow(Math.sin(Math.PI / 2 * forward), 2), forward), 
+            Math.copySign(Math.pow(Math.sin(Math.PI / 2 * turn), 2), turn)
+          );
+        }, 
         m_drivetrain
       )
     );
