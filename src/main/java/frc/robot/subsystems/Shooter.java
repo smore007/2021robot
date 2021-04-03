@@ -20,7 +20,7 @@ public class Shooter extends SubsystemBase {
   
   WPI_TalonFX m_master = new WPI_TalonFX(Constants.kShooterTalonLeft);
   WPI_TalonFX m_slave = new WPI_TalonFX(Constants.kShooterTalonRight);
-  DoubleSolenoid m_piston = new DoubleSolenoid(Constants.kPistonPort, Constants.kShooterPistonForward, Constants.kShooterPistonReverse);
+  DoubleSolenoid m_piston = new DoubleSolenoid(Constants.kPistonModule, Constants.kShooterPistonForward, Constants.kShooterPistonReverse);
 
   /**
    * Creates a new Shooter.

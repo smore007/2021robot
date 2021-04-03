@@ -8,8 +8,10 @@
 package frc.robot;
 
 import frc.robot.commands.SpinIndexer;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.Shoot;
@@ -29,6 +31,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   Drivetrain m_drivetrain = new Drivetrain();
   Limelight m_limelight = new Limelight();
+  Compressor m_compressor = new Compressor(Constants.kCompressorPort);
   Indexer m_indexer = new Indexer();
   Gateway m_gateway = new Gateway();
   Shooter m_shooter = new Shooter();
@@ -36,21 +39,31 @@ public class RobotContainer {
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer() {
-    // Test shooting routine
-    SmartDashboard.putNumber("Test Shooting RPM", 2000);
-    SmartDashboard.putData(new Shoot(m_shooter, m_gateway, m_drivetrain, m_limelight, 
-      () -> SmartDashboard.getNumber("Test Shooting RPM", 0)));
-    
-    // Passively spin indexer, gateway outwards
-    m_indexer.setDefaultCommand(new SpinIndexer(m_indexer, () -> .1));
-    m_gateway.setDefaultCommand(new SpinGateway(m_gateway, () -> -.15));
+  public RobotContainer() {  
+    // Setup smartdashboard for testing
+    setupSmartDashboard();
 
     // Configure the button bindings
     configureButtonBindings();
   }
 
+  private void setupSmartDashboard() {
+    SmartDashboard.putNumber("Test Shooting RPM", 2000);
+    SmartDashboard.putData("Test Shooting Routine", new Shoot(m_shooter, m_gateway, m_drivetrain, m_limelight, 
+      () -> SmartDashboard.getNumber("Test Shooting RPM", 0))
+    );
+
+    SmartDashboard.putData("Raise shooter", new InstantCommand(() -> m_shooter.raise()));
+    SmartDashboard.putData("Lower shooter", new InstantCommand(() -> m_shooter.lower()));
+  }
+
   private void configureButtonBindings() {
+    // Passively spin indexer, gateway outwards
+    new JoystickButton(m_controller, XboxController.Button.kStart.value)
+      .toggleWhenPressed(new SpinIndexer(m_indexer, () -> .1)
+        .alongWith(new SpinGateway(m_gateway, () -> -.15))
+    );
+        
     // Pravshot drive
     m_drivetrain.setDefaultCommand(
       new RunCommand(() -> {

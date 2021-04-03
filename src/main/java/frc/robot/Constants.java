@@ -27,7 +27,9 @@ public final class Constants {
     public static int kShooterTalonLeft = 20;
     public static int kShooterTalonRight = 21;
 
-    public static int kPistonPort = 15;
+    public static int kCompressorPort = 15;
+
+    public static int kPistonModule = 15;
     public static int kShooterPistonForward = 0;
     public static int kShooterPistonReverse = 1;
 

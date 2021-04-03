@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.util.Units;
 
 public class Limelight extends SubsystemBase {
 
@@ -24,8 +25,14 @@ public class Limelight extends SubsystemBase {
     
   }
 
+  public static final double kOuterPortCenterHeightMeters = Units.feetToMeters(98.25 / 12.0);
+  public static final double kLimelightMountHeightMeters = Units.feetToMeters(29 / 12.0);
+  public static final double kLimelightMountAngleDeg = 25.0;
   public double getDistance() {
-    // TODO
-    return 15;
+    // https://docs.limelightvision.io/en/latest/cs_estimating_distance.html
+    // d = (h2-h1) / tan(a1+a2)
+
+    return Math.abs((kOuterPortCenterHeightMeters - kLimelightMountHeightMeters)
+      / Math.tan(Units.degreesToRadians(kLimelightMountAngleDeg + m_ty.getDouble(0.0))));
   }
 }
