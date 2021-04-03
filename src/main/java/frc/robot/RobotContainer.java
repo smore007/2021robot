@@ -9,7 +9,10 @@ package frc.robot;
 
 import frc.robot.commands.SpinIndexer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.SpinGateway;
 import frc.robot.subsystems.*;
 
@@ -21,20 +24,27 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
   XboxController m_controller = new XboxController(0);
+  XboxController m_operator = new XboxController(1);
 
   // The robot's subsystems and commands are defined here...
   Drivetrain m_drivetrain = new Drivetrain();
-  //Indexer m_indexer = new Indexer();
-  //Gateway m_gateway = new Gateway();
-  //Shooter m_shooter = new Shooter();
+  Limelight m_limelight = new Limelight();
+  Indexer m_indexer = new Indexer();
+  Gateway m_gateway = new Gateway();
+  Shooter m_shooter = new Shooter();
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Passively spin indexer, gateway
-    //m_indexer.setDefaultCommand(new SpinIndexer(m_indexer, () -> .1));
-    //m_gateway.setDefaultCommand(new SpinGateway(m_gateway, () -> -.1));
+    // Test shooting routine
+    SmartDashboard.putNumber("Test Shooting RPM", 2000);
+    SmartDashboard.putData(new Shoot(m_shooter, m_gateway, m_drivetrain, m_limelight, 
+      () -> SmartDashboard.getNumber("Test Shooting RPM", 0)));
+    
+    // Passively spin indexer, gateway outwards
+    m_indexer.setDefaultCommand(new SpinIndexer(m_indexer, () -> .1));
+    m_gateway.setDefaultCommand(new SpinGateway(m_gateway, () -> -.15));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -53,6 +63,11 @@ public class RobotContainer {
         }, 
         m_drivetrain
       )
+    );
+
+    // Shooting routine
+    new JoystickButton(m_controller, XboxController.Button.kX.value)
+        .whenHeld(new Shoot(m_shooter, m_gateway, m_drivetrain, m_limelight)
     );
   }
 }

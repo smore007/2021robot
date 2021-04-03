@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -15,7 +17,7 @@ import frc.robot.subsystems.Shooter;
 
 public class Shoot extends SequentialCommandGroup {
   /** Creates a new WarmUpShooter. */
-  public Shoot(Shooter shooter, Gateway gateway, Drivetrain drivetrain, Limelight limelight) {
+  public Shoot(Shooter shooter, Gateway gateway, Drivetrain drivetrain, Limelight limelight, DoubleSupplier rpmTarget) {
     addCommands(
       // Put shooter in correct position
       new InstantCommand(
@@ -29,11 +31,15 @@ public class Shoot extends SequentialCommandGroup {
       // Line up to target
       new AlignToTarget(drivetrain, limelight),
       // Rev up to rpm, move on when its hit
-      new RunCommand(() -> shooter.setRPM(Constants.xuru(limelight.getDistance(), shooter.isRaised())), shooter)
+      new RunCommand(() -> shooter.setRPM(rpmTarget.getAsDouble()), shooter)
         .withInterrupt(() -> Math.abs(shooter.getClosedLoopErrorRPM()) < Constants.kAcceptableShooterError),
       // Finally shoot and spin gateway
-      new SpinShooter(shooter, () -> Constants.xuru(limelight.getDistance(), shooter.isRaised()))
+      new SpinShooter(shooter, () -> rpmTarget.getAsDouble())
         .alongWith(new SpinGateway(gateway, () -> 1))
     );
+  }
+
+  public Shoot(Shooter shooter, Gateway gateway, Drivetrain drivetrain, Limelight limelight) {
+    this(shooter, gateway, drivetrain, limelight, () -> Constants.xuru(limelight.getDistance(), shooter.isRaised()));
   }
 }

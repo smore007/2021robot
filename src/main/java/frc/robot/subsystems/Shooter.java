@@ -18,16 +18,16 @@ import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
   
-  WPI_TalonFX m_master = new WPI_TalonFX(Constants.kShooterTalonMaster);
-  WPI_TalonFX m_slave = new WPI_TalonFX(Constants.kShooterTalonSlave);
-  DoubleSolenoid m_piston = new DoubleSolenoid(Constants.kShooterPistonForward, Constants.kShooterPistonReverse);
+  WPI_TalonFX m_master = new WPI_TalonFX(Constants.kShooterTalonLeft);
+  WPI_TalonFX m_slave = new WPI_TalonFX(Constants.kShooterTalonRight);
+  DoubleSolenoid m_piston = new DoubleSolenoid(Constants.kPistonPort, Constants.kShooterPistonForward, Constants.kShooterPistonReverse);
 
   /**
    * Creates a new Shooter.
    */
   public Shooter() {
-    m_master.setSensorPhase(true);
-    
+    m_master.setInverted(InvertType.InvertMotorOutput);
+
     m_slave.follow(m_master);
     m_slave.setInverted(InvertType.OpposeMaster);
   }
@@ -42,6 +42,10 @@ public class Shooter extends SubsystemBase {
 
   public void lower() {
     m_piston.set(Value.kReverse);
+  }
+
+  public void pistonOff() {
+    m_piston.set(Value.kOff);
   }
 
   public boolean isRaised() {

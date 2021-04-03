@@ -24,11 +24,12 @@ public final class Constants {
 
     public static int kIndexerTalon = 11;
     public static int kGatewayTalon = 12;
-    public static int kShooterTalonMaster = 0;
-    public static int kShooterTalonSlave = 0;
+    public static int kShooterTalonLeft = 20;
+    public static int kShooterTalonRight = 21;
 
+    public static int kPistonPort = 15;
     public static int kShooterPistonForward = 0;
-    public static int kShooterPistonReverse = 0;
+    public static int kShooterPistonReverse = 1;
 
     public static double kDistanceToRaise = 5;
 

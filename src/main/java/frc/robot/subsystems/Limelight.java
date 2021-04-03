@@ -26,6 +26,6 @@ public class Limelight extends SubsystemBase {
 
   public double getDistance() {
     // TODO
-    return -1;
+    return 15;
   }
 }
