@@ -14,14 +14,15 @@ public class AlignToTarget extends PIDCommand {
   public AlignToTarget(Drivetrain drivetrain, Limelight limelight) {
     super(
         // The controller that the command will use
-        new PIDController(0, 0, 0),
+        new PIDController(.1, 0, 0),
         // This should return the measurement
-        () -> 0,
+        () -> limelight.getXOffset(),
         // This should return the setpoint (can also be a constant)
         () -> 0,
         // This uses the output
         output -> {
           // Use the output here
+          drivetrain.arcadeDrive(0, output);
         });
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain, limelight);
@@ -31,6 +32,6 @@ public class AlignToTarget extends PIDCommand {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return getController().atSetpoint();
   }
 }

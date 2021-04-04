@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -13,10 +14,12 @@ public class PravshotDrive extends CommandBase {
   
   Drivetrain m_drivetrain;
   DoubleSupplier m_speed, m_turn;
+  BooleanSupplier m_slow;
   
   /** Creates a new PravshotDrive. */
-  public PravshotDrive(DoubleSupplier speed, DoubleSupplier turn, Drivetrain drivetrain) {
+  public PravshotDrive(DoubleSupplier speed, DoubleSupplier turn, BooleanSupplier slow, Drivetrain drivetrain) {
     m_drivetrain = drivetrain;
+    m_slow = slow;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
@@ -25,11 +28,12 @@ public class PravshotDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double factor = m_slow.getAsBoolean() ? .6 : 1;
     double forward = m_speed.getAsDouble(), turn = m_turn.getAsDouble();
 
     m_drivetrain.arcadeDrive(
-      Math.copySign(Math.pow(Math.sin(Math.PI / 2 * forward), 2), forward), 
-      Math.copySign(Math.pow(Math.sin(Math.PI / 2 * turn), 2), turn)
+      factor * Math.copySign(Math.pow(Math.sin(Math.PI / 2 * forward), 2), forward), 
+      factor * Math.copySign(Math.pow(Math.sin(Math.PI / 2 * turn), 2), turn)
     );
   }
 }

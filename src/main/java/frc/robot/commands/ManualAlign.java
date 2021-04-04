@@ -14,13 +14,14 @@ import frc.robot.subsystems.Limelight;
 
 public class ManualAlign extends CommandBase {
   
-  DoubleSupplier m_turn;
+  DoubleSupplier m_forward, m_turn;
   XboxController m_controller;
   Drivetrain m_drivetrain;
   Limelight m_limelight;
   
   /** Creates a new ManualAlign. */
-  public ManualAlign(DoubleSupplier turn, XboxController controller, Drivetrain drivetrain, Limelight limelight) {
+  public ManualAlign(DoubleSupplier forward, DoubleSupplier turn, XboxController controller, Drivetrain drivetrain, Limelight limelight) {
+    m_forward = forward;
     m_turn = turn;
     m_drivetrain = drivetrain;
     m_limelight = limelight;
@@ -32,15 +33,18 @@ public class ManualAlign extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drivetrain.arcadeDrive(0, m_turn.getAsDouble());
+    m_drivetrain.pravshotDrive(m_forward.getAsDouble(), m_turn.getAsDouble());
 
     double offset = m_limelight.getXOffset();
+    double rumble = Math.abs(m_limelight.getXOffset() / 30.0);
     
-    if (offset > 3.0) {
-      double rumble = Math.abs(m_limelight.getXOffset() / 30.0);
-
-      m_controller.setRumble(rumble > 0 ? RumbleType.kRightRumble : RumbleType.kLeftRumble, rumble);
-      m_controller.setRumble(rumble < 0 ? RumbleType.kRightRumble : RumbleType.kLeftRumble, 0);
+    if (offset > 1.0) {
+      m_controller.setRumble(RumbleType.kLeftRumble, 0);
+      m_controller.setRumble(RumbleType.kRightRumble, rumble);
+    }
+    else if (offset < -1.0) {
+      m_controller.setRumble(RumbleType.kLeftRumble, rumble);
+      m_controller.setRumble(RumbleType.kRightRumble, 0);
     }
     else
     {

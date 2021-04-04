@@ -39,4 +39,11 @@ public class Drivetrain extends SubsystemBase {
   public void curvatureDrive(double speed, double turn, boolean isQuickTurn) {
     m_drive.curvatureDrive(speed, turn, isQuickTurn);
   }
+
+  public void pravshotDrive(double speed, double turn) {
+    m_drive.arcadeDrive(
+      Math.copySign(Math.pow(Math.sin(Math.PI / 2 * speed), 2), speed), 
+      Math.copySign(Math.pow(Math.sin(Math.PI / 2 * turn), 2), turn)
+    );
+  }
 }

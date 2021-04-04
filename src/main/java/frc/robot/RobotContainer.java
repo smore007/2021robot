@@ -10,6 +10,7 @@ package frc.robot;
 import frc.robot.commands.SpinIndexer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -67,20 +68,13 @@ public class RobotContainer {
      */
 
     // (R STICK Y, L STICK X): Forward, turn
+    // (R BUMPER): Slow mode
     // Pravshot drive ;}
     m_drivetrain.setDefaultCommand(
       new PravshotDrive(
         () -> -m_driver.getRawAxis(XboxController.Axis.kRightY.value), 
         () -> m_driver.getRawAxis(XboxController.Axis.kLeftX.value),
-        m_drivetrain)
-    );
-
-    // (R BUMPER): Slow mode
-    final double slowFactor = .6;
-    new JoystickButton(m_driver, XboxController.Button.kBumperRight.value)
-      .whenHeld(new PravshotDrive(
-        () -> slowFactor * -m_driver.getRawAxis(XboxController.Axis.kRightY.value), 
-        () -> slowFactor * m_driver.getRawAxis(XboxController.Axis.kLeftX.value),
+        () -> m_driver.getBumper(Hand.kRight),
         m_drivetrain)
     );
 
@@ -92,6 +86,7 @@ public class RobotContainer {
     // (L BUMPER): Turn only mode for manual target alignment. Vibrates the based off of error
     new JoystickButton(m_driver, XboxController.Button.kBumperLeft.value)
       .whenHeld(new ManualAlign(
+        () -> -m_driver.getRawAxis(XboxController.Axis.kRightY.value),
         () -> m_driver.getRawAxis(XboxController.Axis.kLeftX.value), 
         m_driver, m_drivetrain, m_limelight)
     );
