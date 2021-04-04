@@ -16,22 +16,31 @@ public class SpinIndexer extends CommandBase {
   
   Indexer m_indexer;
   DoubleSupplier m_speed;
+  double m_idleSpeed;
 
   /**
    * Creates a new SpinIndexer.
    */
-  public SpinIndexer(Indexer indexer, DoubleSupplier speed) {
+  public SpinIndexer(Indexer indexer, DoubleSupplier speed, double idleSpeed) {
     m_indexer = indexer;
     m_speed = speed;
+    m_idleSpeed = idleSpeed;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(indexer);
   }
 
+  public SpinIndexer(Indexer indexer, DoubleSupplier speed) {
+    this(indexer, speed, 0);
+  }
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_indexer.spin(m_speed.getAsDouble());
+    double speed = m_speed.getAsDouble();    
+    if(Math.abs(speed) < m_idleSpeed)
+      speed = m_idleSpeed;
+    m_indexer.spin(speed);
   }
 
   // Called once the command ends or is interrupted.

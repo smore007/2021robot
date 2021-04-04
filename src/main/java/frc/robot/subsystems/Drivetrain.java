@@ -30,8 +30,6 @@ public class Drivetrain extends SubsystemBase {
    * Creates a new Drivetrain.
    */
   public Drivetrain() {
-    m_right.setInverted(true);
-    m_left.setInverted(true);
   }
 
   public void arcadeDrive(double speed, double turn) {

@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -32,6 +33,12 @@ public class Shooter extends SubsystemBase {
     m_slave.setInverted(InvertType.OpposeMaster);
   }
 
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Shooter RPM", getRPM());
+    SmartDashboard.putNumber("Shooter Error RPM", getClosedLoopErrorRPM());
+  }
+
 
   /**
    * Raising / lowering with piston
@@ -42,6 +49,13 @@ public class Shooter extends SubsystemBase {
 
   public void lower() {
     m_piston.set(Value.kReverse);
+  }
+
+  public void toggleHeight() {
+    if(isRaised())
+      lower();
+    else
+      raise();
   }
 
   public void pistonOff() {
@@ -79,5 +93,15 @@ public class Shooter extends SubsystemBase {
   // Converts talon units to RPM
   double getRPMFromVelocity(double velocity) {
     return (velocity * 600) / 4096;
+  }
+
+  // The XURU
+  public double getXuru(double distance) {
+    double x = distance;
+
+    if(distance > 10) // Raised
+      return 23.4667*Math.pow(x, 3) - 1181.7143*Math.pow(x, 2) + 19253.3333*x - 81888.5714;
+    else // Lowered
+      return -38.5526*Math.pow(x, 3) + 748.4528*Math.pow(x, 2) - 4459.5178*x + 18815.6851;
   }
 }

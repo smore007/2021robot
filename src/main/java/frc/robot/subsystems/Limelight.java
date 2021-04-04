@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 
 public class Limelight extends SubsystemBase {
@@ -23,6 +24,15 @@ public class Limelight extends SubsystemBase {
   /** Creates a new Limelight. */
   public Limelight() {
     
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Distance Estimate", getDistance());
+  }
+
+  public double getXOffset() {
+    return m_tx.getDouble(180); // Defaults to 180 deg, or the opposite direction
   }
 
   public static final double kOuterPortCenterHeightMeters = Units.feetToMeters(98.25 / 12.0);

@@ -17,10 +17,10 @@ package frc.robot;
  */
 public final class Constants {
     
-    public static int kDTBackLeftTalon = 2;     // Inverted
-    public static int kDTFrontLeftTalon = 1;    // Inverted
-    public static int kDTBackRightTalon = 3;    // NOT inverted
-    public static int kDTFrontRightTalon = 4;   // NOT inverted
+    public static int kDTBackLeftTalon = 2;
+    public static int kDTFrontLeftTalon = 1;
+    public static int kDTBackRightTalon = 3;
+    public static int kDTFrontRightTalon = 4;
 
     public static int kIndexerTalon = 11;
     public static int kGatewayTalon = 12;
@@ -35,8 +35,5 @@ public final class Constants {
 
     public static double kDistanceToRaise = 5;
 
-    public static double kAcceptableShooterError = 50;
-    public static double xuru(double distance, boolean raised) {
-        return 0;
-    }
+    public static double kAcceptableShooterRPMError = 50;
 }

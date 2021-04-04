@@ -13,7 +13,11 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.AlignToTarget;
+import frc.robot.commands.ManualAlign;
+import frc.robot.commands.PravshotDrive;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.SpinGateway;
 import frc.robot.subsystems.*;
@@ -25,7 +29,7 @@ import frc.robot.subsystems.*;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  XboxController m_controller = new XboxController(0);
+  XboxController m_driver = new XboxController(0);
   XboxController m_operator = new XboxController(1);
 
   // The robot's subsystems and commands are defined here...
@@ -49,7 +53,7 @@ public class RobotContainer {
 
   private void setupSmartDashboard() {
     SmartDashboard.putNumber("Test Shooting RPM", 2000);
-    SmartDashboard.putData("Test Shooting Routine", new Shoot(m_shooter, m_gateway, m_drivetrain, m_limelight, 
+    SmartDashboard.putData("Test Shooting Routine", new Shoot(m_shooter, m_gateway, m_limelight, 
       () -> SmartDashboard.getNumber("Test Shooting RPM", 0))
     );
 
@@ -58,29 +62,64 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    // Passively spin indexer, gateway outwards
-    new JoystickButton(m_controller, XboxController.Button.kStart.value)
-      .toggleWhenPressed(new SpinIndexer(m_indexer, () -> .1)
-        .alongWith(new SpinGateway(m_gateway, () -> -.15))
-    );
-        
-    // Pravshot drive
+    /**
+     * Driver
+     */
+
+    // (R STICK Y, L STICK X): Forward, turn
+    // Pravshot drive ;}
     m_drivetrain.setDefaultCommand(
-      new RunCommand(() -> {
-          double forward = -m_controller.getRawAxis(XboxController.Axis.kRightY.value);
-          double turn = m_controller.getRawAxis(XboxController.Axis.kLeftX.value);
-          m_drivetrain.arcadeDrive(
-            Math.copySign(Math.pow(Math.sin(Math.PI / 2 * forward), 2), forward), 
-            Math.copySign(Math.pow(Math.sin(Math.PI / 2 * turn), 2), turn)
-          );
-        }, 
-        m_drivetrain
-      )
+      new PravshotDrive(
+        () -> -m_driver.getRawAxis(XboxController.Axis.kRightY.value), 
+        () -> m_driver.getRawAxis(XboxController.Axis.kLeftX.value),
+        m_drivetrain)
     );
 
-    // Shooting routine
-    new JoystickButton(m_controller, XboxController.Button.kX.value)
-        .whenHeld(new Shoot(m_shooter, m_gateway, m_drivetrain, m_limelight)
+    // (R BUMPER): Slow mode
+    final double slowFactor = .6;
+    new JoystickButton(m_driver, XboxController.Button.kBumperRight.value)
+      .whenHeld(new PravshotDrive(
+        () -> slowFactor * -m_driver.getRawAxis(XboxController.Axis.kRightY.value), 
+        () -> slowFactor * m_driver.getRawAxis(XboxController.Axis.kLeftX.value),
+        m_drivetrain)
+    );
+
+    // (DPAD UP): Auto align to target
+    new Button(() -> m_driver.getPOV() == 0)
+      .whenHeld(new AlignToTarget(m_drivetrain, m_limelight)
+    );
+
+    // (L BUMPER): Turn only mode for manual target alignment. Vibrates the based off of error
+    new JoystickButton(m_driver, XboxController.Button.kBumperLeft.value)
+      .whenHeld(new ManualAlign(
+        () -> m_driver.getRawAxis(XboxController.Axis.kLeftX.value), 
+        m_driver, m_drivetrain, m_limelight)
+    );
+
+    /**
+     * Operator
+     */
+
+    // (X): Shooting routine
+    new JoystickButton(m_operator, XboxController.Button.kX.value)
+        .whenHeld(new Shoot(m_shooter, m_gateway, m_limelight)
+    );
+
+    // (L STICK Y): Gateway control, which spins outwards by default
+    m_gateway.setDefaultCommand(
+      new SpinGateway(
+        m_gateway, () -> m_operator.getRawAxis(XboxController.Axis.kRightX.value), -.15)
+    );
+
+    // (R STICK X): Indexer control, which spins by default
+    m_indexer.setDefaultCommand(
+      new SpinIndexer(
+        m_indexer, () -> m_operator.getRawAxis(XboxController.Axis.kRightX.value), .15)
+    );
+
+    // (BACK): Toggle shooter piston
+    new JoystickButton(m_operator, XboxController.Button.kBack.value)
+      .whenPressed(new RunCommand(() -> m_shooter.toggleHeight(), m_shooter)
     );
   }
 }

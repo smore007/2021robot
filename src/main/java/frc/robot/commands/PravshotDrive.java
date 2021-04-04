@@ -9,13 +9,13 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
-public class ArcadeDrive extends CommandBase {
+public class PravshotDrive extends CommandBase {
   
   Drivetrain m_drivetrain;
   DoubleSupplier m_speed, m_turn;
   
-  /** Creates a new ArcadeDrive. */
-  public ArcadeDrive(DoubleSupplier speed, DoubleSupplier turn, Drivetrain drivetrain) {
+  /** Creates a new PravshotDrive. */
+  public PravshotDrive(DoubleSupplier speed, DoubleSupplier turn, Drivetrain drivetrain) {
     m_drivetrain = drivetrain;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -25,6 +25,11 @@ public class ArcadeDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drivetrain.arcadeDrive(m_speed.getAsDouble(), m_turn.getAsDouble());
+    double forward = m_speed.getAsDouble(), turn = m_turn.getAsDouble();
+
+    m_drivetrain.arcadeDrive(
+      Math.copySign(Math.pow(Math.sin(Math.PI / 2 * forward), 2), forward), 
+      Math.copySign(Math.pow(Math.sin(Math.PI / 2 * turn), 2), turn)
+    );
   }
 }
