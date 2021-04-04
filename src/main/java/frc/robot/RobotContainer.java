@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.AlignToTarget;
+import frc.robot.commands.AutoAlign;
 import frc.robot.commands.ManualAlign;
 import frc.robot.commands.PravshotDrive;
 import frc.robot.commands.Shoot;
@@ -35,11 +35,11 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   Drivetrain m_drivetrain = new Drivetrain();
-  Limelight m_limelight = new Limelight();
-  Compressor m_compressor = new Compressor(Constants.kCompressorPort);
+  Shooter m_shooter = new Shooter();
+  Limelight m_limelight = new Limelight(() -> m_shooter.isRaised());
   Indexer m_indexer = new Indexer();
   Gateway m_gateway = new Gateway();
-  Shooter m_shooter = new Shooter();
+  Compressor m_compressor = new Compressor(Constants.kCompressorPort);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -78,9 +78,10 @@ public class RobotContainer {
         m_drivetrain)
     );
 
-    // (DPAD UP): Auto align to target
+    // (DPAD UP): Auto align to target. You are able to move forward and backwards while this happens
     new Button(() -> m_driver.getPOV() == 0)
-      .whenHeld(new AlignToTarget(m_drivetrain, m_limelight)
+      .whenHeld(new AutoAlign(() -> -m_driver.getRawAxis(XboxController.Axis.kRightY.value), 
+        m_drivetrain, m_limelight)
     );
 
     // (L BUMPER): Turn only mode for manual target alignment. Vibrates the based off of error

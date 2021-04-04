@@ -66,8 +66,10 @@ public class Shooter extends SubsystemBase {
     return m_piston.get() == Value.kForward;
   }
 
+  static final double kDistanceToRaise = 5;
+
   public boolean shouldBeRaised(double distance) {
-    return distance > Constants.kDistanceToRaise;
+    return distance > kDistanceToRaise;
   }
 
   /**
@@ -99,7 +101,7 @@ public class Shooter extends SubsystemBase {
   public double getXuru(double distance) {
     double x = distance;
 
-    if(distance > 10) // Raised
+    if(isRaised()) // Raised
       return 23.4667*Math.pow(x, 3) - 1181.7143*Math.pow(x, 2) + 19253.3333*x - 81888.5714;
     else // Lowered
       return -38.5526*Math.pow(x, 3) + 748.4528*Math.pow(x, 2) - 4459.5178*x + 18815.6851;

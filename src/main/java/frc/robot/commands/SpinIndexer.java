@@ -38,8 +38,10 @@ public class SpinIndexer extends CommandBase {
   @Override
   public void execute() {
     double speed = m_speed.getAsDouble();    
-    if(Math.abs(speed) < m_idleSpeed)
+    
+    if(Math.abs(speed) < Math.abs(m_idleSpeed))
       speed = m_idleSpeed;
+    
     m_indexer.spin(speed);
   }
 

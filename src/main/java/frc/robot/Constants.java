@@ -32,8 +32,4 @@ public final class Constants {
     public static int kPistonModule = 15;
     public static int kShooterPistonForward = 0;
     public static int kShooterPistonReverse = 1;
-
-    public static double kDistanceToRaise = 5;
-
-    public static double kAcceptableShooterRPMError = 50;
 }

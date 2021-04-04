@@ -30,19 +30,21 @@ public class ManualAlign extends CommandBase {
     addRequirements(drivetrain);
   }
 
+  static final double kAcceptableError = 1.0;
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     m_drivetrain.pravshotDrive(m_forward.getAsDouble(), m_turn.getAsDouble());
 
-    double offset = m_limelight.getXOffset();
-    double rumble = Math.abs(m_limelight.getXOffset() / 30.0);
+    double offset = m_limelight.getOffsetX();
+    double rumble = Math.abs(m_limelight.getOffsetX() / 30.0);
     
-    if (offset > 1.0) {
+    if (offset > kAcceptableError) {
       m_controller.setRumble(RumbleType.kLeftRumble, 0);
       m_controller.setRumble(RumbleType.kRightRumble, rumble);
     }
-    else if (offset < -1.0) {
+    else if (offset < -kAcceptableError) {
       m_controller.setRumble(RumbleType.kLeftRumble, rumble);
       m_controller.setRumble(RumbleType.kRightRumble, 0);
     }

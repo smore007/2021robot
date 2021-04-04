@@ -31,9 +31,6 @@ public class PravshotDrive extends CommandBase {
     double factor = m_slow.getAsBoolean() ? .6 : 1;
     double forward = m_speed.getAsDouble(), turn = m_turn.getAsDouble();
 
-    m_drivetrain.arcadeDrive(
-      factor * Math.copySign(Math.pow(Math.sin(Math.PI / 2 * forward), 2), forward), 
-      factor * Math.copySign(Math.pow(Math.sin(Math.PI / 2 * turn), 2), turn)
-    );
+    m_drivetrain.pravshotDrive(forward * factor, turn * factor);
   }
 }

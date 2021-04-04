@@ -7,18 +7,20 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
 import frc.robot.subsystems.Gateway;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 
 public class Shoot extends SequentialCommandGroup {
+  
+  final double kAcceptableShooterRPMError = 50;
+  
   /** Creates a new WarmUpShooter. */
   public Shoot(Shooter shooter, Gateway gateway, Limelight limelight, DoubleSupplier rpmTarget) {
     addCommands(
       // Rev up to rm
       new SpinShooter(shooter, rpmTarget)
-        .withInterrupt(() -> Math.abs(shooter.getClosedLoopErrorRPM()) < Constants.kAcceptableShooterRPMError),
+        .withInterrupt(() -> Math.abs(shooter.getClosedLoopErrorRPM()) < kAcceptableShooterRPMError),
       // When it hits target, open gateway
       new SpinShooter(shooter, rpmTarget)
         .alongWith(new SpinGateway(gateway, () -> 1))
