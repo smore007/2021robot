@@ -13,9 +13,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.AutoAdjustShooter;
 import frc.robot.commands.AutoAlign;
 import frc.robot.commands.ManualAlign;
 import frc.robot.commands.PravshotDrive;
@@ -104,7 +104,7 @@ public class RobotContainer {
     // (L STICK Y): Gateway control, which spins outwards by default
     m_gateway.setDefaultCommand(
       new SpinGateway(
-        m_gateway, () -> m_operator.getRawAxis(XboxController.Axis.kRightX.value), -.15)
+        m_gateway, () -> m_operator.getRawAxis(XboxController.Axis.kLeftY.value), -.15)
     );
 
     // (R STICK X): Indexer control, which spins by default
@@ -113,9 +113,7 @@ public class RobotContainer {
         m_indexer, () -> m_operator.getRawAxis(XboxController.Axis.kRightX.value), .15)
     );
 
-    // (BACK): Toggle shooter piston
-    new JoystickButton(m_operator, XboxController.Button.kBack.value)
-      .whenPressed(new RunCommand(() -> m_shooter.toggleHeight(), m_shooter)
-    );
+    // TODO: make this button do something with the new default command lul (BACK): Manual toggle shooter piston
+    m_shooter.setDefaultCommand(new AutoAdjustShooter(m_shooter, m_limelight));
   }
 }
