@@ -25,20 +25,21 @@ public class ManualAlign extends CommandBase {
     m_turn = turn;
     m_drivetrain = drivetrain;
     m_limelight = limelight;
+    m_controller = controller;
     
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
 
-  static final double kAcceptableError = 1.0;
+  static final double kAcceptableError = .5;
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drivetrain.pravshotDrive(m_forward.getAsDouble(), m_turn.getAsDouble());
+    m_drivetrain.pravshotDrive(m_forward.getAsDouble(), m_turn.getAsDouble() * .6);
 
     double offset = m_limelight.getOffsetX();
-    double rumble = Math.abs(m_limelight.getOffsetX() / 30.0);
+    double rumble = Math.abs(m_limelight.getOffsetX() / 10.0);
     
     if (offset > kAcceptableError) {
       m_controller.setRumble(RumbleType.kLeftRumble, 0);

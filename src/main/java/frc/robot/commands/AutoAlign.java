@@ -13,16 +13,15 @@ import frc.robot.subsystems.Limelight;
 
 public class AutoAlign extends PIDCommand {
 
-  static final double minTurn = .05; // Minimum amount for robot to actually turn
-  static final double tolerance = 1; // How far from the target is considered "on it" TODO: scale based off of distance? i.e. closer = bigger allowed error
-
+  static final double minTurn = .37; // Minimum amount for robot to actually turn
+  
   /** Creates a new AlignToTarget. */
   public AutoAlign(DoubleSupplier forward, Drivetrain drivetrain, Limelight limelight) {
     super(
         // The controller that the command will use
-        new PIDController(.1, 0, 0),
+        new PIDController(0.008, 0.0008, 0.0006),
         // This should return the measurement
-        () -> -limelight.getOffsetX(),
+        () -> limelight.getOffsetX(),
         // This should return the setpoint (can also be a constant)
         () -> 0,
         // Use the output here
@@ -34,7 +33,7 @@ public class AutoAlign extends PIDCommand {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
 
-    getController().setTolerance(tolerance);
+    getController().setTolerance(0.25, 1);
   }
 
   // Returns true when the command should end.

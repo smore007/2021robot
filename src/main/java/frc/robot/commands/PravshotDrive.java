@@ -18,9 +18,11 @@ public class PravshotDrive extends CommandBase {
   
   /** Creates a new PravshotDrive. */
   public PravshotDrive(DoubleSupplier speed, DoubleSupplier turn, BooleanSupplier slow, Drivetrain drivetrain) {
+    m_speed = speed;
+    m_turn = turn;
     m_drivetrain = drivetrain;
     m_slow = slow;
-
+    
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }

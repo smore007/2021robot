@@ -83,6 +83,10 @@ public class Shooter extends SubsystemBase {
     m_master.set(ControlMode.Velocity, getVelocityFromRPM(rpm));
   }
 
+  public void zero() {
+    m_master.set(ControlMode.PercentOutput, 0);
+  }
+
   public double getClosedLoopErrorRPM() {
     return getRPMFromVelocity(m_master.getClosedLoopError());
   }
@@ -101,9 +105,14 @@ public class Shooter extends SubsystemBase {
   public double getXuru(double distance) {
     double x = distance;
 
-    if(isRaised()) // Raised
-      return 23.4667*Math.pow(x, 3) - 1181.7143*Math.pow(x, 2) + 19253.3333*x - 81888.5714;
-    else // Lowered
-      return -38.5526*Math.pow(x, 3) + 748.4528*Math.pow(x, 2) - 4459.5178*x + 18815.6851;
+    // if(isRaised()) // Raised
+      double estimate = getRPMFromVelocity(23.4667*Math.pow(x, 3) - 1181.7143*Math.pow(x, 2) + 19253.3333*x - 81888.5714);
+    // else // Lowered
+      // return getRPMFromVelocity(-38.5526*Math.pow(x, 3) + 748.4528*Math.pow(x, 2) - 4459.5178*x + 18815.6851);
+
+    estimate = 2750;
+      
+    SmartDashboard.putNumber("Target RPM Estimate", estimate);
+    return estimate;
   }
 }

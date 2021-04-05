@@ -9,13 +9,13 @@ package frc.robot;
 
 import frc.robot.commands.SpinIndexer;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.AutoAdjustShooter;
 import frc.robot.commands.AutoAlign;
 import frc.robot.commands.ManualAlign;
 import frc.robot.commands.PravshotDrive;
@@ -54,7 +54,7 @@ public class RobotContainer {
 
   private void setupSmartDashboard() {
     SmartDashboard.putNumber("Test Shooting RPM", 2000);
-    SmartDashboard.putData("Test Shooting Routine", new Shoot(m_shooter, m_gateway, m_limelight, 
+    SmartDashboard.putData("Test Shooting Routine", new Shoot(m_shooter, m_gateway, m_indexer, m_limelight, 
       () -> SmartDashboard.getNumber("Test Shooting RPM", 0))
     );
 
@@ -73,7 +73,7 @@ public class RobotContainer {
     m_drivetrain.setDefaultCommand(
       new PravshotDrive(
         () -> -m_driver.getRawAxis(XboxController.Axis.kRightY.value), 
-        () -> m_driver.getRawAxis(XboxController.Axis.kLeftX.value),
+        () -> -m_driver.getRawAxis(XboxController.Axis.kLeftX.value),
         () -> m_driver.getBumper(Hand.kRight),
         m_drivetrain)
     );
@@ -88,7 +88,7 @@ public class RobotContainer {
     new JoystickButton(m_driver, XboxController.Button.kBumperLeft.value)
       .whenHeld(new ManualAlign(
         () -> -m_driver.getRawAxis(XboxController.Axis.kRightY.value),
-        () -> m_driver.getRawAxis(XboxController.Axis.kLeftX.value), 
+        () -> -m_driver.getRawAxis(XboxController.Axis.kLeftX.value), 
         m_driver, m_drivetrain, m_limelight)
     );
 
@@ -98,22 +98,27 @@ public class RobotContainer {
 
     // (X): Shooting routine
     new JoystickButton(m_operator, XboxController.Button.kX.value)
-        .whenHeld(new Shoot(m_shooter, m_gateway, m_limelight)
+        .whenHeld(new Shoot(m_shooter, m_gateway, m_indexer, m_limelight)
     );
 
     // (L STICK Y): Gateway control, which spins outwards by default
     m_gateway.setDefaultCommand(
       new SpinGateway(
-        m_gateway, () -> m_operator.getRawAxis(XboxController.Axis.kLeftY.value), -.15)
+        m_gateway, () -> Util.deadband(m_operator.getRawAxis(XboxController.Axis.kLeftY.value), .25), 0)
     );
 
     // (R STICK X): Indexer control, which spins by default
     m_indexer.setDefaultCommand(
       new SpinIndexer(
-        m_indexer, () -> m_operator.getRawAxis(XboxController.Axis.kRightX.value), .15)
+        m_indexer, () -> Util.deadband(m_operator.getRawAxis(XboxController.Axis.kRightX.value), .25), 0)
     );
 
+
+
     // TODO: make this button do something with the new default command lul (BACK): Manual toggle shooter piston
-    m_shooter.setDefaultCommand(new AutoAdjustShooter(m_shooter, m_limelight));
+    //m_shooter.setDefaultCommand(new AutoAdjustShooter(m_shooter, m_limelight));
+    // m_shooter.raise();
+    new JoystickButton(m_operator, XboxController.Button.kBack.value)
+      .whenPressed(() -> m_shooter.toggleHeight());
   }
 }

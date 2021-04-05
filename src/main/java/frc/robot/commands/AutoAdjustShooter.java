@@ -30,7 +30,7 @@ public class AutoAdjustShooter extends CommandBase {
 
     if(shouldBeRaised && !m_shooter.isRaised())
       m_shooter.raise();
-    else if(!shouldBeRaised && m_shooter.isRaised())
-      m_shooter.lower();
+    // else if(!shouldBeRaised && m_shooter.isRaised())
+    //   m_shooter.lower();
   }
 }

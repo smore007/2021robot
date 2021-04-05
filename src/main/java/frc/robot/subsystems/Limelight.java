@@ -10,6 +10,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 
@@ -33,6 +34,7 @@ public class Limelight extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Distance Estimate", getDistance());
+    SmartDashboard.putBoolean("Is Aligned", Math.abs(m_tx.getDouble(180)) < Constants.kAlignmentAcceptableError);
   }
 
   public static final int kPipeline = 0, kOff = 1, kBlink = 2, kOn = 3;
@@ -53,7 +55,7 @@ public class Limelight extends SubsystemBase {
   }
 
   double getMountAngle() {
-    return m_isRaised.getAsBoolean() ? 25.0 : -1; // TODO: Make measurement!
+    return m_isRaised.getAsBoolean() ? 105.0 : -1; // TODO: Make measurement!
   }
 
   static final double kOuterPortCenterHeightMeters = Units.feetToMeters(98.25 / 12.0);
