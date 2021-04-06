@@ -26,6 +26,7 @@ public class AutoAlign extends PIDCommand {
         () -> 0,
         // Use the output here
         output -> {
+          // Ensure movement will occur with a minimum turn amount
           output += Math.copySign(minTurn, output);
 
           drivetrain.arcadeDrive(forward.getAsDouble(), output);

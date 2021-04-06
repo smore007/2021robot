@@ -9,7 +9,6 @@ package frc.robot;
 
 import frc.robot.commands.SpinIndexer;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -54,7 +53,7 @@ public class RobotContainer {
 
   private void setupSmartDashboard() {
     SmartDashboard.putNumber("Test Shooting RPM", 2000);
-    SmartDashboard.putData("Test Shooting Routine", new Shoot(m_shooter, m_gateway, m_indexer, m_limelight, 
+    SmartDashboard.putData("Test Shooting Routine", new Shoot(() -> 0, m_shooter, m_gateway, m_indexer, m_limelight, 
       () -> SmartDashboard.getNumber("Test Shooting RPM", 0))
     );
 
@@ -97,8 +96,11 @@ public class RobotContainer {
      */
 
     // (X): Shooting routine
+    // (R STICK X): Manual indexer control
     new JoystickButton(m_operator, XboxController.Button.kX.value)
-        .whenHeld(new Shoot(m_shooter, m_gateway, m_indexer, m_limelight)
+        .whenHeld(new Shoot(
+          () -> Util.deadband(m_operator.getRawAxis(XboxController.Axis.kRightX.value), .25),
+          m_shooter, m_gateway, m_indexer, m_limelight)
     );
 
     // (L STICK Y): Gateway control, which spins outwards by default
@@ -113,11 +115,7 @@ public class RobotContainer {
         m_indexer, () -> Util.deadband(m_operator.getRawAxis(XboxController.Axis.kRightX.value), .25), 0)
     );
 
-
-
-    // TODO: make this button do something with the new default command lul (BACK): Manual toggle shooter piston
-    //m_shooter.setDefaultCommand(new AutoAdjustShooter(m_shooter, m_limelight));
-    // m_shooter.raise();
+    // (BACK): Manual toggle shooter piston
     new JoystickButton(m_operator, XboxController.Button.kBack.value)
       .whenPressed(() -> m_shooter.toggleHeight());
   }

@@ -9,10 +9,9 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase {
 
@@ -34,7 +33,6 @@ public class Limelight extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Distance Estimate", getDistance());
-    SmartDashboard.putBoolean("Is Aligned", Math.abs(m_tx.getDouble(180)) < Constants.kAlignmentAcceptableError);
   }
 
   public static final int kPipeline = 0, kOff = 1, kBlink = 2, kOn = 3;
@@ -42,20 +40,26 @@ public class Limelight extends SubsystemBase {
     m_ledMode.setNumber(mode);
   }
 
-  public int getMode() {
+  public int getLed() {
     return (int)m_ledMode.getNumber(0);
   }
 
   public double getOffsetX() {
-    return m_tx.getDouble(180); // Defaults to 180 deg, or the opposite direction
-  }
-  
-  double getMountHeightMeters() {
-    return m_isRaised.getAsBoolean() ? Units.feetToMeters(29 / 12.0) : -1; // TODO: Make measurement!
+    return m_tv.getBoolean(false) ? m_tx.getDouble(180) : 180; 
   }
 
+  static final double mountHeightRaised = Units.feetToMeters(29 / 12.0);
+  static final double mountHeightLowered = Units.feetToMeters(-1); // TODO
+  
+  double getMountHeightMeters() {
+    return m_isRaised.getAsBoolean() ? mountHeightRaised : mountHeightLowered;
+  }
+
+  static final double mountAngleRaised = 60;
+  static final double mountAngleLowered = -1; // TODO
+
   double getMountAngle() {
-    return m_isRaised.getAsBoolean() ? 105.0 : -1; // TODO: Make measurement!
+    return m_isRaised.getAsBoolean() ? mountHeightRaised : mountHeightLowered;
   }
 
   static final double kOuterPortCenterHeightMeters = Units.feetToMeters(98.25 / 12.0);

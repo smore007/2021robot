@@ -39,7 +39,7 @@ public class SpinGateway extends CommandBase {
   public void execute() {
     double speed = m_speed.getAsDouble();    
     
-    if(Math.abs(speed) < Math.abs(m_idleSpeed))
+    if(speed == 0)
       speed = m_idleSpeed;
     
     m_gateway.spin(speed);

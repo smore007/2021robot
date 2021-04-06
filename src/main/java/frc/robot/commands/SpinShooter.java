@@ -34,10 +34,4 @@ public class SpinShooter extends CommandBase {
   public void end(boolean interrupted) {
     m_shooter.zero();
   }
-
-  @Override
-  public boolean isFinished() {
-    // TODO Auto-generated method stub
-    return false;
-  }
 }

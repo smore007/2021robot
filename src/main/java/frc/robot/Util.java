@@ -7,8 +7,6 @@ package frc.robot;
 /** Add your docs here. */
 public class Util {
     public static double deadband(double value, double band) {
-        if(Math.abs(value) < band)
-            return 0;
-        return value;
+        return Math.abs(value) <= band ? 0 : value;
     }
 }
