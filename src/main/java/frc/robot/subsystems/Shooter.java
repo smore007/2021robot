@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -41,6 +42,11 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter RPM", getRPM());
     SmartDashboard.putNumber("Shooter RPM Target", getTargetRPM());
     SmartDashboard.putNumber("Shooter RPM Error", getClosedLoopErrorRPM());
+
+    SmartDashboard.putBoolean("Shooter Raised", isRaised());
+
+    SmartDashboard.putData("Raise shooter", new InstantCommand(() -> raise()));
+    SmartDashboard.putData("Lower shooter", new InstantCommand(() -> lower()));
   }
 
   /**

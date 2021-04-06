@@ -56,9 +56,6 @@ public class RobotContainer {
     SmartDashboard.putData("Test Shooting Routine", new Shoot(() -> 0, m_shooter, m_gateway, m_indexer, m_limelight, 
       () -> SmartDashboard.getNumber("Test Shooting RPM", 0))
     );
-
-    SmartDashboard.putData("Raise shooter", new InstantCommand(() -> m_shooter.raise()));
-    SmartDashboard.putData("Lower shooter", new InstantCommand(() -> m_shooter.lower()));
   }
 
   private void configureButtonBindings() {
