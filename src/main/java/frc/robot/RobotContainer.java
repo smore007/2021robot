@@ -64,15 +64,18 @@ public class RobotContainer {
      */
 
     // (R STICK Y, L STICK X): Forward, turn
-    // (R BUMPER): Slow mode
     // Pravshot drive ;}
     m_drivetrain.setDefaultCommand(
       new PravshotDrive(
-        () -> -m_driver.getRawAxis(XboxController.Axis.kRightY.value), 
-        () -> -m_driver.getRawAxis(XboxController.Axis.kLeftX.value),
-        () -> m_driver.getBumper(Hand.kRight),
+        () -> -m_driver.getY(Hand.kRight),
+        () -> -m_driver.getX(Hand.kLeft),
         m_drivetrain)
     );
+
+    // (R BUMPER): Slow mode
+    new JoystickButton(m_driver, XboxController.Button.kBumperRight.value)
+      .whenPressed(() -> m_drivetrain.setMaxOutput(.6))
+      .whenReleased(() -> m_drivetrain.setMaxOutput(1));
 
     // (DPAD UP): Auto align to target. You are able to move forward and backwards while this happens
     new Button(() -> m_driver.getPOV() == 0)
@@ -83,8 +86,8 @@ public class RobotContainer {
     // (L BUMPER): Turn only mode for manual target alignment. Vibrates the based off of error
     new JoystickButton(m_driver, XboxController.Button.kBumperLeft.value)
       .whenHeld(new ManualAlign(
-        () -> -m_driver.getRawAxis(XboxController.Axis.kRightY.value),
-        () -> -m_driver.getRawAxis(XboxController.Axis.kLeftX.value), 
+        () -> -m_driver.getY(Hand.kRight),
+        () -> -m_driver.getX(Hand.kLeft),
         m_driver, m_drivetrain, m_limelight)
     );
 
@@ -96,20 +99,20 @@ public class RobotContainer {
     // (R STICK X): Manual indexer control
     new JoystickButton(m_operator, XboxController.Button.kX.value)
         .whenHeld(new Shoot(
-          () -> Util.deadband(m_operator.getRawAxis(XboxController.Axis.kRightX.value), .25),
+          () -> Util.deadband(m_operator.getX(Hand.kRight), .25),
           m_shooter, m_gateway, m_indexer, m_limelight)
     );
 
     // (L STICK Y): Gateway control, which spins outwards by default
     m_gateway.setDefaultCommand(
       new SpinGateway(
-        m_gateway, () -> Util.deadband(m_operator.getRawAxis(XboxController.Axis.kLeftY.value), .25), 0)
+        m_gateway, () -> Util.deadband(m_operator.getY(Hand.kLeft), .25), 0)
     );
 
     // (R STICK X): Indexer control, which spins by default
     m_indexer.setDefaultCommand(
       new SpinIndexer(
-        m_indexer, () -> Util.deadband(m_operator.getRawAxis(XboxController.Axis.kRightX.value), .25), 0)
+        m_indexer, () -> Util.deadband(m_operator.getX(Hand.kRight), .25), 0)
     );
 
     // (BACK): Manual toggle shooter piston

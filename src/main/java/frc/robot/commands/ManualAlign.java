@@ -36,7 +36,7 @@ public class ManualAlign extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drivetrain.pravshotDrive(m_forward.getAsDouble(), m_turn.getAsDouble() * .6);
+    m_drivetrain.pravshotDrive(m_forward.getAsDouble(), m_turn.getAsDouble());
 
     double offset = m_limelight.getOffsetX();
     double rumble = Math.abs(m_limelight.getOffsetX() / 10.0);

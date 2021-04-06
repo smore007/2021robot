@@ -34,6 +34,10 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putData(m_drive);
   }
 
+  public void setMaxOutput(double amount) {
+    m_drive.setMaxOutput(amount);
+  }
+
   public void arcadeDrive(double speed, double turn) {
     m_drive.arcadeDrive(speed, turn);
   }

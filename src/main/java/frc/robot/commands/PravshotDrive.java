@@ -14,14 +14,12 @@ public class PravshotDrive extends CommandBase {
   
   Drivetrain m_drivetrain;
   DoubleSupplier m_speed, m_turn;
-  BooleanSupplier m_slow;
   
   /** Creates a new PravshotDrive. */
-  public PravshotDrive(DoubleSupplier speed, DoubleSupplier turn, BooleanSupplier slow, Drivetrain drivetrain) {
+  public PravshotDrive(DoubleSupplier speed, DoubleSupplier turn, Drivetrain drivetrain) {
     m_speed = speed;
     m_turn = turn;
     m_drivetrain = drivetrain;
-    m_slow = slow;
     
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
@@ -30,9 +28,8 @@ public class PravshotDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double factor = m_slow.getAsBoolean() ? .6 : 1;
     double forward = m_speed.getAsDouble(), turn = m_turn.getAsDouble();
 
-    m_drivetrain.pravshotDrive(forward * factor, turn * factor);
+    m_drivetrain.pravshotDrive(forward, turn);
   }
 }
